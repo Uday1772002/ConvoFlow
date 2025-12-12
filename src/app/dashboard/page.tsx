@@ -8,6 +8,8 @@ import { MessageList } from "@/components/chat/message-list";
 import { MessageInput } from "@/components/chat/message-input";
 import { NewChatDialog } from "@/components/chat/new-chat-dialog";
 import { MessageSkeleton } from "@/components/chat/message-skeleton";
+import { RemindersPanel } from "@/components/chat/reminders-panel";
+import { NotificationCenter } from "@/components/chat/notification-center";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -455,7 +457,10 @@ export default function DashboardPage() {
         <div className="p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold text-cyan-500">ConvoFlow</h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <NotificationCenter 
+                unreadCount={Object.values(unreadCounts).reduce((sum, count) => sum + count, 0)}
+              />
               <Avatar className="h-8 w-8">
                 <AvatarImage src={session?.user?.image || undefined} />
                 <AvatarFallback>
@@ -502,6 +507,11 @@ export default function DashboardPage() {
               </button>
             )}
           </div>
+        </div>
+
+        {/* Reminders Panel */}
+        <div className="px-4">
+          <RemindersPanel />
         </div>
 
         {/* Conversations List */}

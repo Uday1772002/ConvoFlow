@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageWithSender } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials, formatTime } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { MeetingSuggestion } from "@/components/chat/meeting-suggestion";
 
 interface MessageListProps {
   messages: MessageWithSender[];
@@ -13,10 +14,25 @@ interface MessageListProps {
 export function MessageList({ messages }: MessageListProps) {
   const { data: session } = useSession();
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(
+    new Set()
+  );
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Detect meeting-related keywords
+  const detectMeeting = (content: string): boolean => {
+    const meetingKeywords = [
+      /\b(meet|meeting|meetup)\b/i,
+      /\b(schedule|appointment|call)\b/i,
+      /\b(tomorrow|today|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i,
+      /\b(\d{1,2}:\d{2}|am|pm)\b/i,
+    ];
+
+    return meetingKeywords.some((pattern) => pattern.test(content));
+  };
 
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4 h-full">
@@ -27,14 +43,19 @@ export function MessageList({ messages }: MessageListProps) {
       ) : (
         messages.map((message) => {
           const isOwnMessage = message.senderId === session?.user?.id;
+          const hasMeetingKeyword = detectMeeting(message.content);
+          const showSuggestion =
+            hasMeetingKeyword && !dismissedSuggestions.has(message.id);
 
           return (
             <div
               key={message.id}
-              className={`flex gap-3 ${isOwnMessage ? "flex-row-reverse" : ""}`}
+              className={`flex gap-3 items-start ${
+                isOwnMessage ? "flex-row-reverse" : ""
+              }`}
             >
               {!isOwnMessage && (
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-8 w-8 flex-shrink-0">
                   <AvatarImage src={message.sender.image || undefined} />
                   <AvatarFallback>
                     {getInitials(message.sender.name || message.sender.email)}
@@ -65,6 +86,17 @@ export function MessageList({ messages }: MessageListProps) {
                   </p>
                 </div>
 
+                {showSuggestion && (
+                  <MeetingSuggestion
+                    messageContent={message.content}
+                    onDismiss={() => {
+                      setDismissedSuggestions(
+                        (prev) => new Set([...prev, message.id])
+                      );
+                    }}
+                  />
+                )}
+
                 <span
                   className="text-xs text-gray-500 dark:text-gray-400 px-2"
                   title={new Date(message.createdAt).toLocaleString()}
@@ -74,7 +106,7 @@ export function MessageList({ messages }: MessageListProps) {
               </div>
 
               {isOwnMessage && (
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-8 w-8 flex-shrink-0">
                   <AvatarImage src={session?.user?.image || undefined} />
                   <AvatarFallback>
                     {getInitials(
