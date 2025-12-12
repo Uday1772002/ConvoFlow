@@ -1,12 +1,20 @@
 # ConvoFlow 🚀
 
-A modern, real-time chat application built with **Next.js 15**, featuring AI-powered message suggestions, real-time presence indicators, and professional UX enhancements.
+> **House of Edtech Full-Stack Developer Assignment - December 2025**  
+> Built by [Uday Ram](https://github.com/Uday1772002) | [LinkedIn](https://linkedin.com/in/jayaram-uday)
+
+A production-ready, full-stack chat application with real-time messaging, AI-powered features, and comprehensive security. Demonstrates modern web development from concept to deployment.
 
 ![ConvoFlow](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=socket.io)
+
+📚 **Assignment Documentation**:  
+- [Assignment Completion Report](./ASSIGNMENT_COMPLETION.md)  
+- [Security Documentation](./SECURITY.md)  
+- [Deployment Guide](./DEPLOYMENT.md)
 
 ---
 

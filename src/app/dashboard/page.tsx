@@ -10,6 +10,7 @@ import { NewChatDialog } from "@/components/chat/new-chat-dialog";
 import { MessageSkeleton } from "@/components/chat/message-skeleton";
 import { RemindersPanel } from "@/components/chat/reminders-panel";
 import { NotificationCenter } from "@/components/chat/notification-center";
+import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -669,7 +670,12 @@ export default function DashboardPage() {
             </div>
           </ScrollArea>
         </DialogContent>
-      </Dialog>{" "}
+      </Dialog>
+
+      {/* Footer */}
+      <div className="fixed bottom-0 left-0 right-0 z-10">
+        <Footer />
+      </div>
     </div>
   );
 }
