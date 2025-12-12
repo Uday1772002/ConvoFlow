@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Bell, X, MessageCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -16,20 +17,32 @@ interface NotificationCenterProps {
   unreadCount?: number;
 }
 
-export function NotificationCenter({ unreadCount = 0 }: NotificationCenterProps) {
+export function NotificationCenter({
+  unreadCount = 0,
+}: NotificationCenterProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     loadReminders();
-  }, []);
+
+    // Refresh reminders every minute
+    const interval = setInterval(() => {
+      loadReminders();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [unreadCount]);
 
   const loadReminders = () => {
     const stored = localStorage.getItem("convoflow-reminders");
     if (stored) {
       const parsed = JSON.parse(stored);
-      const active = parsed.filter((r: Reminder) => new Date(r.reminderTime) > new Date());
+      const active = parsed.filter(
+        (r: Reminder) => new Date(r.reminderTime) > new Date()
+      );
       setReminders(active);
       setTotalCount(active.length + unreadCount);
     } else {
@@ -44,6 +57,11 @@ export function NotificationCenter({ unreadCount = 0 }: NotificationCenterProps)
     setTotalCount(updated.length + unreadCount);
   };
 
+  const handleViewAll = () => {
+    setIsOpen(false);
+    router.push("/notifications");
+  };
+
   return (
     <div className="relative">
       {/* Bell Button */}
@@ -55,13 +73,11 @@ export function NotificationCenter({ unreadCount = 0 }: NotificationCenterProps)
       >
         <Bell className="h-5 w-5" />
         {totalCount > 0 && (
-          <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-semibold">
-            {totalCount > 9 ? "9+" : totalCount}
-          </span>
+          <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500 animate-pulse" />
         )}
       </Button>
 
-      {/* Dropdown Panel */}
+      {/* Notification Dropdown */}
       {isOpen && (
         <>
           {/* Backdrop */}
@@ -71,9 +87,9 @@ export function NotificationCenter({ unreadCount = 0 }: NotificationCenterProps)
           />
 
           {/* Notification Panel */}
-          <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-2xl z-50">
+          <div className="fixed left-0 mt-2 w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-2xl z-50 max-h-[500px] flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   Notifications
@@ -93,7 +109,7 @@ export function NotificationCenter({ unreadCount = 0 }: NotificationCenterProps)
             </div>
 
             {/* Content */}
-            <ScrollArea className="max-h-96">
+            <ScrollArea className="flex-1 overflow-auto">
               <div className="p-2">
                 {totalCount === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 text-gray-500 dark:text-gray-400">
@@ -113,7 +129,8 @@ export function NotificationCenter({ unreadCount = 0 }: NotificationCenterProps)
                         </div>
                         <div className="p-3 rounded-lg bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 mt-2">
                           <p className="text-sm text-gray-900 dark:text-gray-100">
-                            You have {unreadCount} unread message{unreadCount !== 1 ? "s" : ""}
+                            You have {unreadCount} unread message
+                            {unreadCount !== 1 ? "s" : ""}
                           </p>
                           <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                             Check your conversations to view them
@@ -133,19 +150,30 @@ export function NotificationCenter({ unreadCount = 0 }: NotificationCenterProps)
                         </div>
                         <div className="space-y-2 mt-2">
                           {reminders.map((reminder) => {
-                            const reminderDate = new Date(reminder.reminderTime);
-                            const timeUntil = reminderDate.getTime() - Date.now();
-                            const hoursUntil = Math.floor(timeUntil / (1000 * 60 * 60));
-                            const minutesUntil = Math.floor((timeUntil % (1000 * 60 * 60)) / (1000 * 60));
+                            const reminderDate = new Date(
+                              reminder.reminderTime
+                            );
+                            const timeUntil =
+                              reminderDate.getTime() - Date.now();
+                            const hoursUntil = Math.floor(
+                              timeUntil / (1000 * 60 * 60)
+                            );
+                            const minutesUntil = Math.floor(
+                              (timeUntil % (1000 * 60 * 60)) / (1000 * 60)
+                            );
 
                             let timeText = "";
                             if (hoursUntil > 24) {
                               const daysUntil = Math.floor(hoursUntil / 24);
-                              timeText = `in ${daysUntil} day${daysUntil !== 1 ? "s" : ""}`;
+                              timeText = `in ${daysUntil} day${
+                                daysUntil !== 1 ? "s" : ""
+                              }`;
                             } else if (hoursUntil > 0) {
                               timeText = `in ${hoursUntil}h ${minutesUntil}m`;
                             } else {
-                              timeText = `in ${minutesUntil} min${minutesUntil !== 1 ? "s" : ""}`;
+                              timeText = `in ${minutesUntil} min${
+                                minutesUntil !== 1 ? "s" : ""
+                              }`;
                             }
 
                             return (
@@ -191,20 +219,14 @@ export function NotificationCenter({ unreadCount = 0 }: NotificationCenterProps)
 
             {/* Footer */}
             {totalCount > 0 && (
-              <div className="p-3 border-t border-gray-200 dark:border-gray-800">
+              <div className="p-3 border-t border-gray-200 dark:border-gray-800 flex-shrink-0">
                 <Button
-                  variant="ghost"
+                  variant="default"
                   size="sm"
-                  className="w-full text-xs"
-                  onClick={() => {
-                    if (reminders.length > 0) {
-                      localStorage.setItem("convoflow-reminders", JSON.stringify([]));
-                      setReminders([]);
-                      setTotalCount(unreadCount);
-                    }
-                  }}
+                  onClick={handleViewAll}
+                  className="w-full bg-cyan-600 hover:bg-cyan-700 text-white"
                 >
-                  Clear all reminders
+                  See All Notifications
                 </Button>
               </div>
             )}

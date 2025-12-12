@@ -35,9 +35,11 @@ export function RemindersPanel() {
     if (stored) {
       const parsed = JSON.parse(stored);
       // Filter out past reminders
-      const active = parsed.filter((r: Reminder) => new Date(r.reminderTime) > new Date());
+      const active = parsed.filter(
+        (r: Reminder) => new Date(r.reminderTime) > new Date()
+      );
       setReminders(active);
-      
+
       // Update localStorage to remove past reminders
       if (active.length !== parsed.length) {
         localStorage.setItem("convoflow-reminders", JSON.stringify(active));
@@ -58,7 +60,7 @@ export function RemindersPanel() {
       const reminderTime = new Date(reminder.reminderTime);
       if (reminderTime <= now) {
         triggered.push(reminder);
-        
+
         // Show notification
         if ("Notification" in window && Notification.permission === "granted") {
           new Notification("Meeting Reminder", {
@@ -97,15 +99,17 @@ export function RemindersPanel() {
           Upcoming Reminders ({reminders.length})
         </h3>
       </div>
-      
+
       <ScrollArea className="max-h-48">
         <div className="space-y-2">
           {reminders.map((reminder) => {
             const reminderDate = new Date(reminder.reminderTime);
             const timeUntil = reminderDate.getTime() - Date.now();
             const hoursUntil = Math.floor(timeUntil / (1000 * 60 * 60));
-            const minutesUntil = Math.floor((timeUntil % (1000 * 60 * 60)) / (1000 * 60));
-            
+            const minutesUntil = Math.floor(
+              (timeUntil % (1000 * 60 * 60)) / (1000 * 60)
+            );
+
             let timeText = "";
             if (hoursUntil > 24) {
               const daysUntil = Math.floor(hoursUntil / 24);
@@ -113,7 +117,9 @@ export function RemindersPanel() {
             } else if (hoursUntil > 0) {
               timeText = `in ${hoursUntil}h ${minutesUntil}m`;
             } else {
-              timeText = `in ${minutesUntil} minute${minutesUntil !== 1 ? "s" : ""}`;
+              timeText = `in ${minutesUntil} minute${
+                minutesUntil !== 1 ? "s" : ""
+              }`;
             }
 
             return (

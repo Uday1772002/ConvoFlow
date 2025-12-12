@@ -17,9 +17,20 @@ export function MessageList({ messages }: MessageListProps) {
   const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(
     new Set()
   );
+  const [newMessages, setNewMessages] = useState<Set<string>>(new Set());
+  const previousMessageCountRef = useRef(messages.length);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    // Track new messages
+    if (messages.length > previousMessageCountRef.current) {
+      const newMessageIds = messages
+        .slice(previousMessageCountRef.current)
+        .map((m) => m.id);
+      setNewMessages((prev) => new Set([...prev, ...newMessageIds]));
+    }
+    previousMessageCountRef.current = messages.length;
   }, [messages]);
 
   // Detect meeting-related keywords
@@ -44,8 +55,11 @@ export function MessageList({ messages }: MessageListProps) {
         messages.map((message) => {
           const isOwnMessage = message.senderId === session?.user?.id;
           const hasMeetingKeyword = detectMeeting(message.content);
+          const isNewMessage = newMessages.has(message.id);
           const showSuggestion =
-            hasMeetingKeyword && !dismissedSuggestions.has(message.id);
+            hasMeetingKeyword &&
+            isNewMessage &&
+            !dismissedSuggestions.has(message.id);
 
           return (
             <div
@@ -93,6 +107,11 @@ export function MessageList({ messages }: MessageListProps) {
                       setDismissedSuggestions(
                         (prev) => new Set([...prev, message.id])
                       );
+                      setNewMessages((prev) => {
+                        const updated = new Set(prev);
+                        updated.delete(message.id);
+                        return updated;
+                      });
                     }}
                   />
                 )}

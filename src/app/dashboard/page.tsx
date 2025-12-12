@@ -458,8 +458,11 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold text-cyan-500">ConvoFlow</h1>
             <div className="flex items-center gap-1">
-              <NotificationCenter 
-                unreadCount={Object.values(unreadCounts).reduce((sum, count) => sum + count, 0)}
+              <NotificationCenter
+                unreadCount={Object.values(unreadCounts).reduce(
+                  (sum, count) => sum + count,
+                  0
+                )}
               />
               <Avatar className="h-8 w-8">
                 <AvatarImage src={session?.user?.image || undefined} />
