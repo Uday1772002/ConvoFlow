@@ -1,11 +1,12 @@
 # ConvoFlow 🚀
 
-A modern, real-time chat application built with **Next.js 15**, featuring AI-powered message suggestions, secure authentication, and instant messaging capabilities.
+A modern, real-time chat application built with **Next.js 15**, featuring AI-powered message suggestions, real-time presence indicators, and professional UX enhancements.
 
 ![ConvoFlow](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
-![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?style=for-the-badge&logo=prisma)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=socket.io)
 
 ---
 
@@ -13,26 +14,41 @@ A modern, real-time chat application built with **Next.js 15**, featuring AI-pow
 
 ### Core Functionality
 
-- 💬 **Real-time Messaging** - Instant message delivery using Pusher WebSockets
+- 💬 **Real-time Messaging** - Instant message delivery using Socket.IO
 - 👥 **One-on-One & Group Chats** - Support for direct messaging and group conversations
 - 🔐 **Secure Authentication** - JWT-based authentication with NextAuth v5
 - 🔍 **User Search** - Find and connect with other users
 - 📱 **Responsive Design** - Fully responsive UI that works on all devices
+- 🎨 **Dark Theme** - Beautiful dark mode by default with cyan accent color
 
-### AI-Powered Features
+### AI-Powered Features (Google Gemini)
 
 - 🤖 **Smart Reply Suggestions** - AI-generated contextual reply recommendations
 - ✨ **Message Improvement** - Enhance message clarity and tone
-- 📊 **Conversation Summaries** - Automatically summarize long conversations
-- 🎯 **Context-Aware Responses** - AI understands conversation history
+- 📊 **Conversation Summaries** - Automatically summarize long conversations with dialog UI
+- 🎯 **Context-Aware Responses** - AI understands conversation history and sender context
+
+### Real-time Presence Features
+
+- ✍️ **Typing Indicators** - See when others are typing in real-time
+- 🟢 **Online Status** - Green dot indicators show who's currently online
+- 🔔 **Unread Badges** - Cyan badges display unread message counts
+- 📨 **Live Updates** - Messages appear instantly via WebSocket connection
+
+### Professional UX Enhancements
+
+- 🔍 **Conversation Search** - Filter chats by name or message content
+- ⌨️ **Keyboard Shortcuts** - Cmd/Ctrl+K for search, Escape to close dialogs
+- 💀 **Loading Skeletons** - Professional loading states instead of spinners
+- 🕐 **Hover Timestamps** - Full date/time on hover over message times
+- ✨ **Smooth Animations** - Polished transitions and hover effects
+- 📱 **Collapsible Sidebar** - Toggle sidebar on all screen sizes
 
 ### Technical Features
 
 - 🚀 **Next.js 15** with App Router and React Server Components
-- 🎨 **Modern UI** - Beautiful, gradient-based design with dark mode support
-- 🔄 **Real-time Updates** - Live message delivery and presence indicators
-- 🗄️ **PostgreSQL Database** - Robust data persistence with Prisma ORM
-- 🔒 **Data Validation** - Input validation using Zod
+- 🗄️ **MongoDB Database** - Robust data persistence with Mongoose
+- 🔌 **Socket.IO** - Bidirectional real-time communication
 - 🎭 **Type Safety** - Full TypeScript implementation
 - ⚡ **Optimized Performance** - Server-side rendering and code splitting
 
@@ -42,27 +58,28 @@ A modern, real-time chat application built with **Next.js 15**, featuring AI-pow
 
 ### Frontend
 
-- **Next.js 15** - React framework with server components
+- **Next.js 15** - React framework with App Router
 - **React 19** - UI library with latest features
 - **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
-- **Radix UI** - Accessible component primitives
+- **Tailwind CSS** - Utility-first styling with dark mode
+- **Shadcn/ui** - Accessible component primitives
 - **Lucide Icons** - Beautiful icon library
 
 ### Backend
 
 - **Next.js API Routes** - Serverless API endpoints
-- **Prisma** - Modern ORM for database access
-- **PostgreSQL** - Relational database
-- **NextAuth** - Authentication solution
-- **Pusher** - Real-time WebSocket service
-- **OpenAI SDK** - AI-powered features
+- **MongoDB** - NoSQL database for flexible data storage
+- **Mongoose** - Elegant MongoDB object modeling
+- **NextAuth v5** - Authentication with JWT sessions
+- **Socket.IO** - Real-time bidirectional event-based communication
+- **Node.js HTTP Server** - Custom server for Socket.IO integration
+- **Google Generative AI** - Gemini AI for smart features
 
 ### Development Tools
 
 - **ESLint** - Code linting
-- **Prettier** - Code formatting (implicit via Next.js)
 - **Git** - Version control
+- **TypeScript** - Static type checking
 
 ---
 
@@ -71,9 +88,8 @@ A modern, real-time chat application built with **Next.js 15**, featuring AI-pow
 ### Prerequisites
 
 - **Node.js** 18.x or higher
-- **PostgreSQL** database
-- **Pusher** account (free tier available)
-- **OpenAI** API key (for AI features)
+- **MongoDB** database (local or Atlas)
+- **Google AI Studio** API key (free tier available)
 
 ### 1. Clone the Repository
 
@@ -90,41 +106,52 @@ npm install
 
 ### 3. Set Up Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env.local` file in the root directory:
 
 ```bash
-cp .env.example .env
+touch .env.local
 ```
 
-Update the following variables in `.env`:
+Add the following variables:
 
 ```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/convoflow?schema=public"
+# MongoDB
+MONGODB_URI="mongodb://localhost:27017/convoflow"
+# Or use MongoDB Atlas:
+# MONGODB_URI="mongodb+srv://username:password@cluster.mongodb.net/convoflow?retryWrites=true&w=majority"
 
 # NextAuth
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="generate-with: openssl rand -base64 32"
 
-# Pusher
-PUSHER_APP_ID="your-pusher-app-id"
-PUSHER_SECRET="your-pusher-secret"
-NEXT_PUBLIC_PUSHER_APP_KEY="your-pusher-app-key"
-NEXT_PUBLIC_PUSHER_CLUSTER="your-pusher-cluster"
-
-# OpenAI
-OPENAI_API_KEY="your-openai-api-key"
+# Google Gemini AI
+GEMINI_API_KEY="your-google-ai-studio-api-key"
 ```
 
-### 4. Set Up Database
+**Get your Gemini API Key:**
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create or sign in to your Google account
+3. Click "Get API Key" → "Create API key"
+4. Copy and paste into `.env.local`
 
+### 4. Set Up MongoDB
+
+**Option A: Local MongoDB**
 ```bash
-# Generate Prisma client
-npm run prisma:generate
+# Install MongoDB (macOS)
+brew install mongodb-community
 
-# Run migrations
-npm run prisma:migrate
+# Start MongoDB
+brew services start mongodb-community
+
+# Database will be created automatically on first run
 ```
+
+**Option B: MongoDB Atlas (Cloud)**
+1. Create free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a cluster
+3. Get connection string
+4. Add to `.env.local` as `MONGODB_URI`
 
 ### 5. Run Development Server
 
@@ -132,7 +159,7 @@ npm run prisma:migrate
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+The app runs on [http://localhost:3000](http://localhost:3000) with Socket.IO server integrated.
 
 ---
 
@@ -140,68 +167,94 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ```
 convoflow/
-├── prisma/
-│   └── schema.prisma          # Database schema
-├── public/                    # Static assets
+├── server.js                 # Custom Node.js server with Socket.IO
+├── public/                   # Static assets
 ├── src/
 │   ├── app/
-│   │   ├── api/              # API routes
-│   │   │   ├── auth/         # Authentication endpoints
+│   │   ├── api/             # API routes
+│   │   │   ├── auth/        # Authentication endpoints
 │   │   │   ├── conversations/ # Chat endpoints
-│   │   │   ├── users/        # User endpoints
-│   │   │   ├── pusher/       # Pusher auth
-│   │   │   └── ai/           # AI features
-│   │   ├── auth/             # Auth pages (signin/signup)
-│   │   ├── dashboard/        # Main chat interface
-│   │   ├── layout.tsx        # Root layout
-│   │   ├── page.tsx          # Landing page
-│   │   └── globals.css       # Global styles
+│   │   │   ├── users/       # User endpoints
+│   │   │   └── ai/          # AI features (Gemini)
+│   │   ├── auth/            # Auth pages (signin/signup)
+│   │   ├── dashboard/       # Main chat interface
+│   │   │   └── page.tsx     # Dashboard with all features
+│   │   ├── layout.tsx       # Root layout with dark theme
+│   │   ├── page.tsx         # Landing page
+│   │   └── globals.css      # Global styles
 │   ├── components/
-│   │   ├── chat/             # Chat components
-│   │   ├── ui/               # Reusable UI components
-│   │   └── providers/        # Context providers
+│   │   ├── chat/            # Chat components
+│   │   │   ├── conversation-list.tsx  # With unread badges & online status
+│   │   │   ├── message-list.tsx       # With hover effects
+│   │   │   ├── message-input.tsx      # With typing events
+│   │   │   ├── message-skeleton.tsx   # Loading state
+│   │   │   └── new-chat-dialog.tsx    # Create conversation
+│   │   ├── ui/              # Reusable UI components
+│   │   └── providers/       # Session provider
 │   ├── lib/
-│   │   ├── auth.ts           # NextAuth configuration
-│   │   ├── prisma.ts         # Prisma client
-│   │   ├── pusher.ts         # Pusher configuration
-│   │   └── utils.ts          # Utility functions
-│   ├── types/                # TypeScript types
-│   └── middleware.ts         # Auth middleware
-├── .env.example              # Environment template
-├── next.config.ts            # Next.js config
-├── tailwind.config.ts        # Tailwind config
-└── tsconfig.json             # TypeScript config
+│   │   ├── auth.ts          # NextAuth configuration
+│   │   ├── auth.config.ts   # Auth options
+│   │   ├── mongodb.ts       # MongoDB connection
+│   │   ├── models.ts        # Mongoose schemas
+│   │   ├── socket.ts        # Socket.IO client
+│   │   ├── gemini.ts        # Google AI integration
+│   │   └── utils.ts         # Utility functions
+│   ├── types/               # TypeScript types
+│   └── middleware.ts        # Auth middleware
+├── .env.local               # Environment variables (gitignored)
+├── next.config.ts           # Next.js config
+├── tailwind.config.ts       # Tailwind config with dark mode
+└── tsconfig.json            # TypeScript config
 ```
 
 ---
 
 ## 🔧 Configuration
 
-### Pusher Setup
+### Google Gemini AI Setup
 
-1. Create account at [Pusher.com](https://pusher.com)
-2. Create a new Channels app
-3. Get your app credentials from the dashboard
-4. Update `.env` with your Pusher credentials
+1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click "Get API key" or "Create API key"
+4. Copy the API key
+5. Add to `.env.local` as `GEMINI_API_KEY`
 
-### OpenAI Setup
+**Free Tier:**
+- 60 requests per minute
+- Perfect for development and small projects
 
-1. Get API key from [OpenAI Platform](https://platform.openai.com)
-2. Add to `.env` as `OPENAI_API_KEY`
+### MongoDB Setup
 
-### Database Setup
-
-**Using Local PostgreSQL:**
-
+**Local MongoDB:**
 ```bash
-createdb convoflow
+# macOS
+brew tap mongodb/brew
+brew install mongodb-community
+brew services start mongodb-community
+
+# Ubuntu
+sudo apt-get install mongodb
+sudo systemctl start mongodb
+
+# Verify
+mongosh
 ```
 
-**Using Docker:**
+**MongoDB Atlas (Cloud):**
+1. Create account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create free M0 cluster
+3. Create database user
+4. Whitelist your IP or use `0.0.0.0/0` for development
+5. Get connection string
+6. Add to `.env.local`
+
+### NextAuth Secret Generation
 
 ```bash
-docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
+openssl rand -base64 32
 ```
+
+Copy the output to `NEXTAUTH_SECRET` in `.env.local`
 
 ---
 
@@ -222,11 +275,16 @@ npm run build
 
 Ensure all environment variables are set in your hosting platform:
 
-- `DATABASE_URL`
-- `NEXTAUTH_URL` (your production URL)
-- `NEXTAUTH_SECRET`
-- `PUSHER_*` variables
-- `OPENAI_API_KEY`
+- `MONGODB_URI` - Your MongoDB connection string
+- `NEXTAUTH_URL` - Your production URL (e.g., https://yourapp.vercel.app)
+- `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
+- `GEMINI_API_KEY` - Your Google AI Studio API key
+
+**Note:** Socket.IO requires a server that supports WebSockets. Vercel serverless functions don't support persistent WebSocket connections. Consider:
+- Railway
+- Render
+- DigitalOcean App Platform
+- Or deploy Socket.IO server separately
 
 ---
 
@@ -249,7 +307,6 @@ Ensure all environment variables are set in your hosting platform:
 
 - `GET /api/conversations/[id]/messages` - Get messages
 - `POST /api/conversations/[id]/messages` - Send message
-- `PATCH /api/conversations/[id]/messages/[messageId]` - Edit message
 - `DELETE /api/conversations/[id]/messages/[messageId]` - Delete message
 
 ### AI Features
@@ -264,32 +321,50 @@ Ensure all environment variables are set in your hosting platform:
 
 ## 🎨 Features Showcase
 
-### Real-time Messaging
+### Real-time Messaging with Socket.IO
 
-Messages are delivered instantly using Pusher WebSockets, providing a seamless chat experience.
+Messages are delivered instantly with bidirectional WebSocket communication. No page refresh needed!
 
-### AI Smart Replies
+### Typing Indicators
 
-Click the sparkle icon to get AI-generated reply suggestions based on conversation context.
+See "User is typing..." indicators in real-time as others compose messages. Auto-disappears after 2 seconds of inactivity.
 
-### Responsive Design
+### Online Status
 
-Works perfectly on desktop, tablet, and mobile devices with an adaptive layout.
+Green dots on user avatars show who's currently online. Updated in real-time as users connect/disconnect.
 
-### Dark Mode
+### Unread Badges
 
-Automatically adapts to system theme preferences.
+Cyan badges show unread message counts on each conversation. Automatically clears when you open the chat.
+
+### Conversation Search
+
+Use the search bar to filter conversations by contact name or message content. Press **Cmd+K** (Mac) or **Ctrl+K** (Windows) to quickly focus the search.
+
+### AI-Powered Features
+
+- **Smart Replies**: Click the ✨ sparkle icon to get 3 AI-generated reply suggestions
+- **Summarize**: Click "Summarize" button to get an AI-generated conversation summary
+- **Context-Aware**: AI understands who said what and recent conversation history
+
+### Professional UX
+
+- **Loading Skeletons**: Beautiful loading states instead of spinners
+- **Hover Timestamps**: See full date/time on hover
+- **Keyboard Shortcuts**: Cmd+K for search, Escape to close dialogs
+- **Dark Theme**: Sleek dark mode with cyan accents
+- **Smooth Animations**: Polished transitions throughout
 
 ---
 
 ## 🔐 Security
 
 - **Password Hashing** - bcrypt with salt rounds
-- **JWT Tokens** - Secure session management
-- **Input Validation** - Zod schemas for all inputs
-- **SQL Injection Prevention** - Prisma ORM parameterized queries
+- **JWT Tokens** - Secure session management with NextAuth
+- **NoSQL Injection Prevention** - Mongoose schema validation
 - **XSS Protection** - React's built-in escaping
 - **CSRF Protection** - NextAuth CSRF tokens
+- **Environment Variables** - Sensitive data in .env.local (gitignored)
 
 ---
 
@@ -303,33 +378,22 @@ Automatically adapts to system theme preferences.
 
 ---
 
-## 🧪 Testing
-
-```bash
-# Run tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run E2E tests
-npm run test:e2e
-```
-
----
-
 ## 📈 Future Enhancements
 
 - [ ] Voice messages
-- [ ] File sharing
+- [ ] File and image sharing
 - [ ] Video calls
-- [ ] Message reactions
-- [ ] Message threading
-- [ ] Read receipts
-- [ ] Typing indicators
+- [ ] Message reactions (👍, ❤️, 😂)
+- [ ] Reply to specific messages (threading)
+- [ ] Read receipts (✓✓)
+- [ ] Edit/delete messages
 - [ ] Push notifications
-- [ ] Message search
-- [ ] User status (online/offline)
+- [ ] Message search within conversations
+- [ ] @mentions in group chats
+- [ ] User profiles and settings
+- [ ] Theme customization
+- [ ] Export chat history
+- [ ] Message forwarding
 
 ---
 
@@ -357,63 +421,49 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - 🔗 **GitHub**: [@jayaramuday](https://github.com/jayaramuday)
 - 💼 **LinkedIn**: [jayaramuday](https://linkedin.com/in/jayaramuday)
-- 📧 **Email**: your.email@example.com
 
 ---
 
 ## 🙏 Acknowledgments
 
 - [Next.js](https://nextjs.org/) - The React Framework
-- [Vercel](https://vercel.com/) - Deployment platform
-- [Pusher](https://pusher.com/) - Real-time infrastructure
-- [OpenAI](https://openai.com/) - AI capabilities
-- [Radix UI](https://www.radix-ui.com/) - UI components
+- [MongoDB](https://www.mongodb.com/) - Database platform
+- [Socket.IO](https://socket.io/) - Real-time engine
+- [Google Gemini](https://ai.google.dev/) - AI capabilities
+- [Shadcn/ui](https://ui.shadcn.com/) - UI components
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [NextAuth](https://next-auth.js.org/) - Authentication
 
 ---
 
 ## 📞 Support
 
-For support, email your.email@example.com or open an issue on GitHub.
+For support, open an issue on GitHub.
+
+---
+
+## 🎯 Quick Start Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server (with Socket.IO)
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
 
 ---
 
 <div align="center">
 
-**Built with ❤️ using Next.js 15**
+**Built with ❤️ using Next.js 15, Socket.IO, MongoDB & Google Gemini AI**
 
 [⬆ Back to Top](#convoflow-)
 
 </div>
-
-# or
-
-pnpm dev
-
-# or
-
-bun dev
-
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-```
