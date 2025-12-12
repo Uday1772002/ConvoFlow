@@ -46,7 +46,8 @@ export function Footer() {
         {/* Bottom: Copyright */}
         <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
           <p className="text-xs text-center text-gray-500 dark:text-gray-500">
-            © {new Date().getFullYear()} ConvoFlow. Built for House of Edtech Full-Stack Developer Assignment.
+            © {new Date().getFullYear()} ConvoFlow. Built for House of Edtech
+            Full-Stack Developer Assignment.
           </p>
         </div>
       </div>

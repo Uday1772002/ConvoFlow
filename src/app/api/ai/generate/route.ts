@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { generateAIResponse } from "@/lib/gemini";
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const session = await auth();
 

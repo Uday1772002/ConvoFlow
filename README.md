@@ -11,9 +11,10 @@ A production-ready, full-stack chat application with real-time messaging, AI-pow
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=socket.io)
 
-📚 **Assignment Documentation**:  
-- [Assignment Completion Report](./ASSIGNMENT_COMPLETION.md)  
-- [Security Documentation](./SECURITY.md)  
+📚 **Assignment Documentation**:
+
+- [Assignment Completion Report](./ASSIGNMENT_COMPLETION.md)
+- [Security Documentation](./SECURITY.md)
 - [Deployment Guide](./DEPLOYMENT.md)
 
 ---

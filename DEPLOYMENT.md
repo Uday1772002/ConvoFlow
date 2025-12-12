@@ -12,13 +12,14 @@
 ✅ **Code Quality**: TypeScript, ESLint, clean architecture  
 ✅ **Security**: Comprehensive security measures documented  
 ✅ **Footer**: Developer name, GitHub, LinkedIn links  
-✅ **Real-World Considerations**: Scalability, error handling  
+✅ **Real-World Considerations**: Scalability, error handling
 
 ---
 
 ## 🚀 Deployment to Vercel
 
 ### Prerequisites
+
 - Vercel account (free tier available)
 - GitHub repository
 - MongoDB Atlas cluster
@@ -49,36 +50,36 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
-  
+
   // Production optimizations
-  output: 'standalone',
-  
+  output: "standalone",
+
   // Security headers
   async headers() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         headers: [
           {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on'
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
           },
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains'
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains",
           },
           {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN'
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          }
-        ]
-      }
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+        ],
+      },
     ];
-  }
+  },
 };
 ```
 
@@ -113,11 +114,13 @@ vercel --prod
 Since ConvoFlow uses Socket.IO with a custom server:
 
 **Option A: Separate Socket Server (Recommended)**
+
 1. Deploy Socket.IO server separately (Render, Railway, or DigitalOcean)
 2. Update `NEXT_PUBLIC_SOCKET_URL` to point to socket server
 3. Configure CORS to allow Vercel domain
 
 **Option B: Use Vercel Edge Functions**
+
 - Note: Socket.IO may have limitations with serverless
 - Consider using Vercel's Edge Functions with WebSocket support
 - Alternative: Use Pusher or Ably for production
@@ -125,6 +128,7 @@ Since ConvoFlow uses Socket.IO with a custom server:
 ### Step 6: Database Setup
 
 MongoDB Atlas Configuration:
+
 ```bash
 1. Create cluster on MongoDB Atlas
 2. Create database user
@@ -167,35 +171,35 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          
+          node-version: "18"
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Lint
         run: npm run lint
-        
+
       - name: Build
         run: npm run build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           GOOGLE_AI_API_KEY: ${{ secrets.GOOGLE_AI_API_KEY }}
-          
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 ```
 
 ---
@@ -203,6 +207,7 @@ jobs:
 ## 🌐 Alternative Deployment Options
 
 ### Option 1: Netlify
+
 ```bash
 npm install -g netlify-cli
 netlify login
@@ -211,6 +216,7 @@ netlify deploy --prod
 ```
 
 ### Option 2: Railway
+
 ```bash
 # Install Railway CLI
 npm i -g @railway/cli
@@ -224,6 +230,7 @@ railway up
 ### Option 3: Docker + DigitalOcean
 
 Create `Dockerfile`:
+
 ```dockerfile
 FROM node:18-alpine AS builder
 WORKDIR /app
@@ -245,6 +252,7 @@ CMD ["node", "server.js"]
 ```
 
 Build and deploy:
+
 ```bash
 docker build -t convoflow .
 docker tag convoflow registry.digitalocean.com/your-registry/convoflow
@@ -256,6 +264,7 @@ docker push registry.digitalocean.com/your-registry/convoflow
 ## 📊 Performance Optimization
 
 ### Pre-Deployment Checklist
+
 - [ ] Enable compression in production
 - [ ] Configure CDN for static assets
 - [ ] Set up image optimization
@@ -268,6 +277,7 @@ docker push registry.digitalocean.com/your-registry/convoflow
 - [ ] Test on multiple devices
 
 ### Build Optimizations
+
 ```json
 {
   "scripts": {
@@ -282,12 +292,14 @@ docker push registry.digitalocean.com/your-registry/convoflow
 ## 🔒 Production Security
 
 ### Environment Variables Security
+
 - Never commit `.env` files
 - Use Vercel's encrypted environment variables
 - Rotate secrets regularly
 - Use different keys for production vs development
 
 ### HTTPS Configuration
+
 - Vercel automatically provides SSL
 - Ensure all API calls use HTTPS
 - Set secure cookie flags
@@ -298,25 +310,30 @@ docker push registry.digitalocean.com/your-registry/convoflow
 ## 📱 Post-Deployment Testing
 
 ### Manual Testing Checklist
+
 1. **Authentication Flow**
+
    - Sign up new user
    - Sign in existing user
    - Password validation
    - Session persistence
 
 2. **Real-Time Features**
+
    - Send/receive messages
    - Typing indicators
    - Online status
    - Unread counts
 
 3. **AI Features**
+
    - Smart replies
    - Message improvement
    - Chat summaries
    - Meeting detection
 
 4. **Responsive Design**
+
    - Mobile (320px-768px)
    - Tablet (768px-1024px)
    - Desktop (1024px+)
@@ -333,6 +350,7 @@ docker push registry.digitalocean.com/your-registry/convoflow
 ### Common Issues
 
 **Issue: Environment variables not loading**
+
 ```bash
 Solution:
 1. Verify variables in Vercel dashboard
@@ -341,6 +359,7 @@ Solution:
 ```
 
 **Issue: Socket.IO connection fails**
+
 ```bash
 Solution:
 1. Check CORS configuration
@@ -350,6 +369,7 @@ Solution:
 ```
 
 **Issue: Database connection timeout**
+
 ```bash
 Solution:
 1. Whitelist Vercel IPs in MongoDB Atlas
@@ -359,6 +379,7 @@ Solution:
 ```
 
 **Issue: Build fails**
+
 ```bash
 Solution:
 1. Run `npm run build` locally
@@ -372,12 +393,14 @@ Solution:
 ## 📈 Monitoring & Maintenance
 
 ### Set Up Monitoring
+
 - **Vercel Analytics**: Built-in performance monitoring
 - **Sentry**: Error tracking and reporting
 - **LogRocket**: Session replay and debugging
 - **Uptime Robot**: Availability monitoring
 
 ### Regular Maintenance
+
 - Weekly dependency updates
 - Monthly security audits
 - Quarterly performance reviews
@@ -388,11 +411,13 @@ Solution:
 ## 🎓 Assignment Submission
 
 ### What to Submit
+
 1. **GitHub Repository**: https://github.com/Uday1772002/ConvoFlow
 2. **Live Deployment**: https://convoflow.vercel.app (update with your URL)
 3. **Documentation**: Complete README.md, SECURITY.md, and this file
 
 ### Grading Criteria Met
+
 ✅ Functionality: Full CRUD operations
 ✅ UI/UX: Responsive, accessible design
 ✅ Code Quality: TypeScript, clean architecture
@@ -407,6 +432,7 @@ Solution:
 ## 📞 Support
 
 For deployment issues or questions:
+
 - **Developer**: Uday Ram
 - **GitHub**: [@Uday1772002](https://github.com/Uday1772002)
 - **LinkedIn**: [jayaram-uday](https://linkedin.com/in/jayaram-uday)
