@@ -146,7 +146,6 @@ export default function DashboardPage() {
 
     // Listen for typing events
     socket.on("user-typing", ({ conversationId, userId, userName }) => {
-      console.log("User typing:", userName, "in conversation:", conversationId);
       setTypingUsers((prev) => {
         const current = prev[conversationId] || [];
         if (!current.includes(userName)) {
@@ -157,7 +156,6 @@ export default function DashboardPage() {
     });
 
     socket.on("user-stopped-typing", ({ conversationId, userId, userName }) => {
-      console.log("User stopped typing:", userName);
       setTypingUsers((prev) => {
         const current = prev[conversationId] || [];
         return {
@@ -169,17 +167,14 @@ export default function DashboardPage() {
 
     // Listen for online status
     socket.on("online-users", (users: string[]) => {
-      console.log("Online users received:", users);
       setOnlineUsers(users);
     });
 
     socket.on("user-online", (userId: string) => {
-      console.log("User came online:", userId);
       setOnlineUsers((prev) => [...new Set([...prev, userId])]);
     });
 
     socket.on("user-offline", (userId: string) => {
-      console.log("User went offline:", userId);
       setOnlineUsers((prev) => prev.filter((id) => id !== userId));
     });
 

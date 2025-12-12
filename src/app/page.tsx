@@ -35,7 +35,7 @@ export default function Home() {
                 Real-time Messaging
               </h3>
               <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Instant message delivery with Pusher websockets
+                Instant message delivery with Socket.IO websockets
               </p>
             </div>
 

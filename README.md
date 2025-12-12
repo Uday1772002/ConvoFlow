@@ -129,6 +129,7 @@ GEMINI_API_KEY="your-google-ai-studio-api-key"
 ```
 
 **Get your Gemini API Key:**
+
 1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
 2. Create or sign in to your Google account
 3. Click "Get API Key" → "Create API key"
@@ -137,6 +138,7 @@ GEMINI_API_KEY="your-google-ai-studio-api-key"
 ### 4. Set Up MongoDB
 
 **Option A: Local MongoDB**
+
 ```bash
 # Install MongoDB (macOS)
 brew install mongodb-community
@@ -148,6 +150,7 @@ brew services start mongodb-community
 ```
 
 **Option B: MongoDB Atlas (Cloud)**
+
 1. Create free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 2. Create a cluster
 3. Get connection string
@@ -220,12 +223,14 @@ convoflow/
 5. Add to `.env.local` as `GEMINI_API_KEY`
 
 **Free Tier:**
+
 - 60 requests per minute
 - Perfect for development and small projects
 
 ### MongoDB Setup
 
 **Local MongoDB:**
+
 ```bash
 # macOS
 brew tap mongodb/brew
@@ -241,6 +246,7 @@ mongosh
 ```
 
 **MongoDB Atlas (Cloud):**
+
 1. Create account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 2. Create free M0 cluster
 3. Create database user
@@ -281,6 +287,7 @@ Ensure all environment variables are set in your hosting platform:
 - `GEMINI_API_KEY` - Your Google AI Studio API key
 
 **Note:** Socket.IO requires a server that supports WebSockets. Vercel serverless functions don't support persistent WebSocket connections. Consider:
+
 - Railway
 - Render
 - DigitalOcean App Platform
