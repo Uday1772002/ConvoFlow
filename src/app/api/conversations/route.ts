@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { Conversation, Message, User } from "@/lib/models";
+import type { UserDocument, ConversationDocument } from "@/types/mongoose";
 
 // GET - Fetch all conversations for current user
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     await connectDB();
     const session = await auth();
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     // Get participants and last message for each conversation
     const conversationsWithDetails = await Promise.all(
-      conversations.map(async (conv: any) => {
+      conversations.map(async (conv: ConversationDocument) => {
         // Get participant details
         const participantUsers = await User.find({
           _id: { $in: conv.participantIds },
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
         let lastMessageFormatted = null;
         if (lastMessage) {
           const sender = participantUsers.find(
-            (p: any) => p._id.toString() === lastMessage.senderId
+            (p: UserDocument) => p._id.toString() === lastMessage.senderId
           );
 
           if (sender) {
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
           isGroup: conv.isGroup,
           createdAt: conv.createdAt,
           updatedAt: conv.updatedAt,
-          participants: participantUsers.map((p: any) => ({
+          participants: participantUsers.map((p: UserDocument) => ({
             userId: p._id.toString(),
             user: {
               id: p._id.toString(),
@@ -87,8 +88,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ conversations: conversationsWithDetails });
   } catch (error) {
     console.error("Error fetching conversations:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Internal server error", details: error.message },
+      { error: "Internal server error", details: errorMessage },
       { status: 500 }
     );
   }
@@ -147,7 +149,7 @@ export async function POST(request: NextRequest) {
             isGroup: existingConversation.isGroup,
             createdAt: existingConversation.createdAt,
             updatedAt: existingConversation.updatedAt,
-            participants: participants.map((p: any) => ({
+            participants: participants.map((p: UserDocument) => ({
               user: {
                 id: p._id.toString(),
                 name: p.name,
@@ -184,7 +186,7 @@ export async function POST(request: NextRequest) {
           isGroup: conversation.isGroup,
           createdAt: conversation.createdAt,
           updatedAt: conversation.updatedAt,
-          participants: participants.map((p: any) => ({
+          participants: participants.map((p: UserDocument) => ({
             user: {
               id: p._id.toString(),
               name: p.name,

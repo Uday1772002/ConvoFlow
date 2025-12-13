@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { Message, Conversation, User } from "@/lib/models";
+import type { MessageDocument, UserDocument } from "@/types/mongoose";
 
 interface RouteParams {
   params: Promise<{
@@ -39,14 +40,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .lean();
 
     // Get unique sender IDs and fetch users
-    const senderIds = [...new Set(messages.map((m: any) => m.senderId))];
+    const senderIds = [...new Set(messages.map((m: MessageDocument) => m.senderId))];
     const senders = await User.find({ _id: { $in: senderIds } })
       .select("name email image")
       .lean();
 
-    const senderMap = new Map(senders.map((s: any) => [s._id.toString(), s]));
+    const senderMap = new Map(senders.map((s: UserDocument) => [s._id.toString(), s]));
 
-    const formattedMessages = messages.map((m: any) => {
+    const formattedMessages = messages.map((m: MessageDocument) => {
       const sender = senderMap.get(m.senderId);
       return {
         id: m._id.toString(),

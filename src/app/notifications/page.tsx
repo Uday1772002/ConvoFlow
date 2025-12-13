@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, X, MessageCircle, Clock, ArrowLeft } from "lucide-react";
+import { Bell, X, Clock, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Reminder {
   id: string;
@@ -74,7 +73,7 @@ export default function NotificationsPage() {
           <div className="flex flex-col items-center justify-center py-16 text-gray-500 dark:text-gray-400">
             <Bell className="h-16 w-16 mb-4 opacity-30" />
             <h2 className="text-xl font-semibold mb-2">No notifications</h2>
-            <p className="text-sm">You're all caught up!</p>
+            <p className="text-sm">You&apos;re all caught up!</p>
           </div>
         ) : (
           <div className="space-y-6">

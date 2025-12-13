@@ -36,7 +36,7 @@ export function ConversationList({
     <div className="flex flex-col">
       {conversations.map((conversation) => {
         const otherParticipants = conversation.participants.filter(
-          (p) => p.userId !== session?.user?.id
+          (p) => p.user.id !== session?.user?.id
         );
 
         const displayName = conversation.isGroup
@@ -68,7 +68,7 @@ export function ConversationList({
               {/* Online indicator */}
               {!conversation.isGroup &&
                 otherParticipants[0] &&
-                onlineUsers.includes(otherParticipants[0].userId) && (
+                onlineUsers.includes(otherParticipants[0].user.id) && (
                   <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-950"></div>
                 )}
             </div>

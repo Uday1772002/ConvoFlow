@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
     const query = searchQuery.toLowerCase();
     const otherParticipants = conv.participants.filter(
-      (p) => p.userId !== session?.user?.id
+      (p) => p.user.id !== session?.user?.id
     );
     const displayName = conv.isGroup
       ? conv.name || "Group Chat"
@@ -116,9 +116,12 @@ export default function DashboardPage() {
     console.log("Socket connected, user joined:", session.user.id);
 
     // Listen for new conversations
-    socket.on("conversation-created", (conversation: any) => {
-      setConversations((prev) => [conversation, ...prev]);
-    });
+    socket.on(
+      "conversation-created",
+      (conversation: ConversationWithLastMessage) => {
+        setConversations((prev) => [conversation, ...prev]);
+      }
+    );
 
     // Listen for new messages
     socket.on("message", (message: MessageWithSender) => {
@@ -147,25 +150,31 @@ export default function DashboardPage() {
     });
 
     // Listen for typing events
-    socket.on("user-typing", ({ conversationId, userId, userName }) => {
-      setTypingUsers((prev) => {
-        const current = prev[conversationId] || [];
-        if (!current.includes(userName)) {
-          return { ...prev, [conversationId]: [...current, userName] };
-        }
-        return prev;
-      });
-    });
+    socket.on(
+      "user-typing",
+      ({ conversationId, userId: _userId, userName }) => {
+        setTypingUsers((prev) => {
+          const current = prev[conversationId] || [];
+          if (!current.includes(userName)) {
+            return { ...prev, [conversationId]: [...current, userName] };
+          }
+          return prev;
+        });
+      }
+    );
 
-    socket.on("user-stopped-typing", ({ conversationId, userId, userName }) => {
-      setTypingUsers((prev) => {
-        const current = prev[conversationId] || [];
-        return {
-          ...prev,
-          [conversationId]: current.filter((u) => u !== userName),
-        };
-      });
-    });
+    socket.on(
+      "user-stopped-typing",
+      ({ conversationId, userId: _userId, userName }) => {
+        setTypingUsers((prev) => {
+          const current = prev[conversationId] || [];
+          return {
+            ...prev,
+            [conversationId]: current.filter((u) => u !== userName),
+          };
+        });
+      }
+    );
 
     // Listen for online status
     socket.on("online-users", (users: string[]) => {
@@ -428,7 +437,7 @@ export default function DashboardPage() {
   );
 
   const otherParticipants = selectedConversation?.participants.filter(
-    (p) => p.userId !== session?.user?.id
+    (p) => p.user.id !== session?.user?.id
   );
 
   const displayName = selectedConversation?.isGroup

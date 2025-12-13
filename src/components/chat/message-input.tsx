@@ -71,7 +71,6 @@ export function MessageInput({
       e.preventDefault();
       handleSubmit(e);
     }
-    handleMessageChange;
   };
 
   // Cleanup on unmount

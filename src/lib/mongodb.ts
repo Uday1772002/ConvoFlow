@@ -6,11 +6,11 @@ if (!MONGODB_URI) {
   throw new Error("Please define the DATABASE_URL environment variable");
 }
 
-// @ts-ignore
+// @ts-expect-error - global.mongoose is not in the type definitions
 let cached = global.mongoose;
 
 if (!cached) {
-  // @ts-ignore
+  // @ts-expect-error - global.mongoose is not in the type definitions
   cached = global.mongoose = { conn: null, promise: null };
 }
 

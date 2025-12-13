@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/lib/models";
 import mongoose from "mongoose";
+import type { UserDocument } from "@/types/mongoose";
 
 // GET - Search users (excluding current user)
 export async function GET(request: NextRequest) {
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
       .limit(20)
       .lean();
 
-    const formattedUsers = users.map((user: any) => ({
+    const formattedUsers = users.map((user: UserDocument) => ({
       id: user._id.toString(),
       name: user.name,
       email: user.email,

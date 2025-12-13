@@ -33,7 +33,7 @@ export default function SignInPage() {
 
       router.push("/dashboard");
       router.refresh();
-    } catch (err) {
+    } catch (_err) {
       setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
@@ -108,7 +108,7 @@ export default function SignInPage() {
           </form>
 
           <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/auth/signup"
               className="text-blue-600 dark:text-blue-400 font-medium hover:underline"

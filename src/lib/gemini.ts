@@ -2,7 +2,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-export async function generateAIResponse(type, context) {
+interface AIContext {
+  messages?: Array<{ sender: string; content: string; isOwnMessage?: boolean }>;
+  currentUserName?: string;
+  currentMessage?: string;
+}
+
+export async function generateAIResponse(type: string, context: AIContext): Promise<string> {
   try {
     // Check if API key is configured
     if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "") {
@@ -54,18 +60,16 @@ Generate 3 brief, natural reply suggestions (1-2 sentences each) that the user c
     return text.trim();
   } catch (error) {
     console.error("Gemini AI error details:", {
-      message: error?.message,
-      status: error?.status,
-      statusText: error?.statusText,
+      message: error instanceof Error ? error.message : "Unknown error",
       error: error,
     });
 
-    if (error?.message?.includes("API key")) {
+    if (error instanceof Error && error.message?.includes("API key")) {
       throw new Error("Invalid or missing Gemini API key");
     }
 
     throw new Error(
-      `Failed to generate AI response: ${error?.message || "Unknown error"}`
+      `Failed to generate AI response: ${error instanceof Error ? error.message : "Unknown error"}`
     );
   }
 }

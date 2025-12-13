@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { Conversation, Message, User } from "@/lib/models";
+import type { MessageDocument, UserDocument } from "@/types/mongoose";
 
 interface RouteParams {
   params: Promise<{
@@ -54,12 +55,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .lean();
 
     // Get unique sender IDs and fetch users
-    const senderIds = [...new Set(messages.map((m: any) => m.senderId))];
+    const senderIds = [...new Set(messages.map((m: MessageDocument) => m.senderId))];
     const senders = await User.find({ _id: { $in: senderIds } })
       .select("name email image")
       .lean();
 
-    const senderMap = new Map(senders.map((s: any) => [s._id.toString(), s]));
+    const senderMap = new Map(senders.map((s: UserDocument) => [s._id.toString(), s]));
 
     const formattedConversation = {
       id: conversation._id.toString(),
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       isGroup: conversation.isGroup,
       createdAt: conversation.createdAt,
       updatedAt: conversation.updatedAt,
-      participants: participants.map((p: any) => ({
+      participants: participants.map((p: UserDocument) => ({
         user: {
           id: p._id.toString(),
           name: p.name,
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           image: p.image,
         },
       })),
-      messages: messages.map((m: any) => {
+      messages: messages.map((m: MessageDocument) => {
         const sender = senderMap.get(m.senderId);
         return {
           id: m._id.toString(),

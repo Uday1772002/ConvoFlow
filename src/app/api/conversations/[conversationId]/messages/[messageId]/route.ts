@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { Message, User } from "@/lib/models";
+import type { MessageDocument, UserDocument } from "@/types/mongoose";
 
 interface RouteParams {
   params: Promise<{
@@ -14,7 +15,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     await connectDB();
     const session = await auth();
-    const { conversationId, messageId } = await params;
+    const { conversationId: _conversationId, messageId } = await params;
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -58,21 +59,21 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     ).lean();
 
     // Fetch sender details
-    const sender = await User.findById((updatedMessage as any).senderId)
+    const sender = await User.findById((updatedMessage as MessageDocument).senderId)
       .select("name email image")
       .lean();
 
     const formattedMessage = {
-      id: (updatedMessage as any)._id.toString(),
-      content: (updatedMessage as any).content,
-      conversationId: (updatedMessage as any).conversationId,
-      senderId: (updatedMessage as any).senderId,
-      createdAt: (updatedMessage as any).createdAt,
-      updatedAt: (updatedMessage as any).updatedAt,
-      deletedAt: (updatedMessage as any).deletedAt,
+      id: (updatedMessage as MessageDocument)._id.toString(),
+      content: (updatedMessage as MessageDocument).content,
+      conversationId: (updatedMessage as MessageDocument).conversationId,
+      senderId: (updatedMessage as MessageDocument).senderId,
+      createdAt: (updatedMessage as MessageDocument).createdAt,
+      updatedAt: (updatedMessage as MessageDocument).updatedAt,
+      deletedAt: (updatedMessage as MessageDocument).deletedAt,
       sender: sender
         ? {
-            id: sender._id.toString(),
+            id: (sender as UserDocument)._id.toString(),
             name: sender.name,
             email: sender.email,
             image: sender.image,
@@ -91,11 +92,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE - Delete a message (soft delete)
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     await connectDB();
     const session = await auth();
-    const { conversationId, messageId } = await params;
+    const { conversationId: _conversationId, messageId } = await params;
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
