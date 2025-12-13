@@ -15,7 +15,7 @@ export async function generateAIResponse(type: string, context: AIContext): Prom
       throw new Error("GEMINI_API_KEY is not configured");
     }
 
-    // Using gemini-2.5-flash for Google AI Studio
+    // Using gemini-2.5-flash (latest model)
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
     });
