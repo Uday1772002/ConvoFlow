@@ -59,7 +59,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     ).lean();
 
     // Fetch sender details
-    const sender = await User.findById((updatedMessage as MessageDocument).senderId)
+    const sender = await User.findById(
+      (updatedMessage as MessageDocument).senderId
+    )
       .select("name email image")
       .lean();
 

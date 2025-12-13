@@ -88,7 +88,8 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({ conversations: conversationsWithDetails });
   } catch (error) {
     console.error("Error fetching conversations:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       { error: "Internal server error", details: errorMessage },
       { status: 500 }

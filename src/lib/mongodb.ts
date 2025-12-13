@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.DATABASE_URL || "mongodb://localhost:27017/convoflow";
+const MONGODB_URI =
+  process.env.DATABASE_URL || "mongodb://localhost:27017/convoflow";
 
 if (!MONGODB_URI) {
   throw new Error("Please define the DATABASE_URL environment variable");

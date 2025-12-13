@@ -55,12 +55,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .lean();
 
     // Get unique sender IDs and fetch users
-    const senderIds = [...new Set(messages.map((m: MessageDocument) => m.senderId))];
+    const senderIds = [
+      ...new Set(messages.map((m: MessageDocument) => m.senderId)),
+    ];
     const senders = await User.find({ _id: { $in: senderIds } })
       .select("name email image")
       .lean();
 
-    const senderMap = new Map(senders.map((s: UserDocument) => [s._id.toString(), s]));
+    const senderMap = new Map(
+      senders.map((s: UserDocument) => [s._id.toString(), s])
+    );
 
     const formattedConversation = {
       id: conversation._id.toString(),
