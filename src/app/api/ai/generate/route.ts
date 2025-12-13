@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("AI generation error:", error);
 
-    const errorMessage = error?.message || "Failed to generate AI response";
+    const errorMessage = error instanceof Error ? error.message : "Failed to generate AI response";
     const status = errorMessage.includes("API key") ? 503 : 500;
 
     return NextResponse.json(
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         error: errorMessage,
         details:
           process.env.NODE_ENV === "development"
-            ? error?.toString()
+            ? String(error)
             : undefined,
       },
       { status }
