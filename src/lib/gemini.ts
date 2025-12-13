@@ -8,7 +8,10 @@ interface AIContext {
   currentMessage?: string;
 }
 
-export async function generateAIResponse(type: string, context: AIContext): Promise<string> {
+export async function generateAIResponse(
+  type: string,
+  context: AIContext
+): Promise<string> {
   try {
     // Check if API key is configured
     if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "") {
@@ -29,17 +32,27 @@ export async function generateAIResponse(type: string, context: AIContext): Prom
           .map((m) => `${m.sender}: ${m.content}`)
           .join("\n");
         const lastMessage = recentMessages[recentMessages.length - 1];
-        const respondingTo = lastMessage?.isOwnMessage
-          ? "You just said"
-          : `${lastMessage?.sender} just said`;
-
-        prompt = `You are helping someone reply in a chat conversation. Here's the recent conversation:
+        
+        // If the user sent the last message, suggest what the other person might reply
+        // If someone else sent it, suggest what the user might reply
+        if (lastMessage?.isOwnMessage) {
+          const userName = context.currentUserName || "You";
+          prompt = `You are helping predict possible replies in a chat conversation. Here's the recent conversation:
 
 ${messageHistory}
 
-${respondingTo}: "${lastMessage?.content}"
+${userName} just sent: "${lastMessage?.content}"
 
-Generate 3 brief, natural reply suggestions (1-2 sentences each) that the user could send. Make them conversational and relevant to what was just said. Return each suggestion on a new line.`;
+Generate 3 brief, natural reply suggestions (1-2 sentences each) that the OTHER person in the conversation might send back. Make them conversational and relevant responses to what ${userName} just said. Return each suggestion on a new line.`;
+        } else {
+          prompt = `You are helping someone reply in a chat conversation. Here's the recent conversation:
+
+${messageHistory}
+
+${lastMessage?.sender} just said: "${lastMessage?.content}"
+
+Generate 3 brief, natural reply suggestions (1-2 sentences each) that you could send back. Make them conversational and relevant to what was just said. Return each suggestion on a new line.`;
+        }
         break;
 
       case "improve":
@@ -69,7 +82,9 @@ Generate 3 brief, natural reply suggestions (1-2 sentences each) that the user c
     }
 
     throw new Error(
-      `Failed to generate AI response: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to generate AI response: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
     );
   }
 }
