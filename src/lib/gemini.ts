@@ -31,15 +31,19 @@ export async function generateAIResponse(
         const messageHistory = recentMessages
           .map((m) => `${m.sender}: ${m.content}`)
           .join("\n");
-        const lastMessage = recentMessages[recentMessages.length - 1];
         const userName = context.currentUserName || "You";
 
-        // Always suggest what YOU (the current user) might say next to continue the conversation
-        prompt = `You are helping someone continue a chat conversation. Here's the recent conversation:
+        // Suggest what YOU want to say next to continue YOUR side of the conversation
+        prompt = `You are helping ${userName} write their next message in a chat conversation. Here's the recent conversation:
 
 ${messageHistory}
 
-${userName} wants to continue the conversation. Generate 3 brief, natural message suggestions (1-2 sentences each) that ${userName} could send next to keep the conversation going. Make them conversational, friendly, and relevant to the conversation context. Return each suggestion on a new line.`;
+${userName} wants to send another message to continue or add to what they're saying. Generate 3 brief, natural follow-up messages (1-2 sentences each) that ${userName} could send next. These should:
+- Continue their own thoughts/topic
+- Add more details or questions
+- Keep THEIR side of the conversation flowing naturally
+
+Do NOT suggest responses to what the other person said. Only suggest what ${userName} might say next to continue their own conversation flow. Return each suggestion on a new line.`;
         break;
 
       case "improve":
