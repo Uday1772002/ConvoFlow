@@ -32,27 +32,14 @@ export async function generateAIResponse(
           .map((m) => `${m.sender}: ${m.content}`)
           .join("\n");
         const lastMessage = recentMessages[recentMessages.length - 1];
-        
-        // If the user sent the last message, suggest what the other person might reply
-        // If someone else sent it, suggest what the user might reply
-        if (lastMessage?.isOwnMessage) {
-          const userName = context.currentUserName || "You";
-          prompt = `You are helping predict possible replies in a chat conversation. Here's the recent conversation:
+        const userName = context.currentUserName || "You";
+
+        // Always suggest what YOU (the current user) might say next to continue the conversation
+        prompt = `You are helping someone continue a chat conversation. Here's the recent conversation:
 
 ${messageHistory}
 
-${userName} just sent: "${lastMessage?.content}"
-
-Generate 3 brief, natural reply suggestions (1-2 sentences each) that the OTHER person in the conversation might send back. Make them conversational and relevant responses to what ${userName} just said. Return each suggestion on a new line.`;
-        } else {
-          prompt = `You are helping someone reply in a chat conversation. Here's the recent conversation:
-
-${messageHistory}
-
-${lastMessage?.sender} just said: "${lastMessage?.content}"
-
-Generate 3 brief, natural reply suggestions (1-2 sentences each) that you could send back. Make them conversational and relevant to what was just said. Return each suggestion on a new line.`;
-        }
+${userName} wants to continue the conversation. Generate 3 brief, natural message suggestions (1-2 sentences each) that ${userName} could send next to keep the conversation going. Make them conversational, friendly, and relevant to the conversation context. Return each suggestion on a new line.`;
         break;
 
       case "improve":
