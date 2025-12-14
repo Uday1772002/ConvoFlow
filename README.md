@@ -428,6 +428,7 @@ Your data is safe! Here's how:
 Built for **House of Edtech Full-Stack Developer Assignment**
 
 **Core Requirements:**
+
 - ✅ Next.js 15 + React 19 + TypeScript
 - ✅ Full CRUD operations (Users, Conversations, Messages)
 - ✅ User authentication with JWT
@@ -436,6 +437,7 @@ Built for **House of Edtech Full-Stack Developer Assignment**
 - ✅ Production deployment on Vercel
 
 **Bonus Features:**
+
 - ✅ Google Gemini AI integration (smart replies, summaries, meeting detection)
 - ✅ Real-time chat with Socket.IO (instant messaging, typing indicators, online status)
 - ✅ Advanced UI/UX (search, notifications, keyboard shortcuts)
