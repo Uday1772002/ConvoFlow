@@ -541,7 +541,7 @@ _Thanks for checking out my work! If you have any questions or want to chat abou
 
 ### Footer Integration
 
-- ✅ Developer name: Uday Ram
+- ✅ Developer name: Jayaram Uday
 - ✅ GitHub profile: [@Uday1772002](https://github.com/Uday1772002)
 - ✅ LinkedIn profile: [jayaram-uday](https://linkedin.com/in/jayaram-uday)
 - ✅ Present on all pages
@@ -588,7 +588,6 @@ The project demonstrates deep understanding of modern web development, from conc
 ## 🔗 Links
 
 - **GitHub Repository**: https://github.com/Uday1772002/ConvoFlow
-- **Live Deployment**: [Update after Vercel deployment]
 - **Developer LinkedIn**: https://linkedin.com/in/jayaram-uday
 - **Developer GitHub**: https://github.com/Uday1772002
 
@@ -596,4 +595,4 @@ The project demonstrates deep understanding of modern web development, from conc
 
 **Submitted for**: House of Edtech Full-Stack Developer Assignment  
 **Date**: December 2025  
-**Developer**: Uday Ram
+**Developer**: Jayaram Uday
