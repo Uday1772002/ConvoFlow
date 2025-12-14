@@ -16,7 +16,7 @@ export function Footer() {
           {/* Center: Developer Name */}
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              Developed by Uday Ram
+              Developed by Jayaram Uday
             </span>
           </div>
 

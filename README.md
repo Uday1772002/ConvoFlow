@@ -1,7 +1,7 @@
 # ConvoFlow 🚀
 
 > **House of Edtech Full-Stack Developer Assignment - December 2025**  
-> Built with ❤️ by [Uday Ram](https://github.com/Uday1772002) | [LinkedIn](https://linkedin.com/in/jayaram-uday)
+> Built with ❤️ by [Jayaram Uday](https://github.com/Uday1772002) | [LinkedIn](https://linkedin.com/in/jayaram-uday)
 
 Hey there! 👋 Welcome to ConvoFlow - a real-time chat app that I built from scratch to show what I can do with modern web technologies. It's got everything: instant messaging, AI-powered features that actually make sense, and it's deployed and ready to use. Think of it as WhatsApp meets ChatGPT, but built by one developer in a couple of weeks!
 
@@ -10,12 +10,6 @@ Hey there! 👋 Welcome to ConvoFlow - a real-time chat app that I built from sc
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?style=for-the-badge&logo=socket.io)
-
-📚 **Assignment Documentation**:
-
-- [Assignment Completion Report](./ASSIGNMENT_COMPLETION.md)
-- [Security Documentation](./SECURITY.md)
-- [Deployment Guide](./DEPLOYMENT.md)
 
 ---
 
@@ -397,7 +391,60 @@ No contribution is too small - even fixing typos helps! 😊
 
 ---
 
-## 📝 License
+## � Deployment
+
+Ready to put this live?
+
+1. **Push to GitHub** - Make sure your code is on GitHub
+2. **Go to Vercel** - Sign up at [vercel.com](https://vercel.com) (free tier works great!)
+3. **Import Project** - Click "New Project" and select your repo
+4. **Add Environment Variables**:
+   - `MONGODB_URI` - Your MongoDB connection string
+   - `NEXTAUTH_SECRET` - Run `openssl rand -base64 32` to generate
+   - `NEXTAUTH_URL` - Your Vercel URL (like https://your-app.vercel.app)
+   - `GEMINI_API_KEY` - Your Google AI Studio API key
+5. **Deploy!** - Click deploy and wait ~2 minutes
+
+**Note:** For production with lots of users, consider deploying Socket.IO separately on Railway or Render for better WebSocket support.
+
+---
+
+## 🔒 Security
+
+Your data is safe! Here's how:
+
+- **Passwords**: Hashed with bcrypt (nobody can read them, not even me)
+- **Authentication**: JWT tokens in HTTP-only cookies
+- **Authorization**: You can only see YOUR conversations
+- **Input Validation**: Everything gets checked before saving
+- **XSS Protection**: React automatically escapes dangerous content
+- **NoSQL Injection**: Mongoose parameterized queries prevent attacks
+- **HTTPS**: All production traffic is encrypted
+
+---
+
+## ✅ Assignment Requirements Met
+
+Built for **House of Edtech Full-Stack Developer Assignment**
+
+**Core Requirements:**
+- ✅ Next.js 15 + React 19 + TypeScript
+- ✅ Full CRUD operations (Users, Conversations, Messages)
+- ✅ User authentication with JWT
+- ✅ Responsive UI with Tailwind CSS
+- ✅ MongoDB database with Mongoose
+- ✅ Production deployment on Vercel
+
+**Bonus Features:**
+- ✅ Google Gemini AI integration (smart replies, summaries, meeting detection)
+- ✅ Real-time chat with Socket.IO (instant messaging, typing indicators, online status)
+- ✅ Advanced UI/UX (search, notifications, keyboard shortcuts)
+- ✅ Comprehensive security measures
+- ✅ Clean, documented, type-safe code
+
+---
+
+## �📝 License
 
 This project is licensed under the MIT License - which basically means you can do whatever you want with it. Fork it, modify it, learn from it, break it, sell it (though I doubt anyone would buy it 😄). Just don't blame me if something goes wrong!
 
