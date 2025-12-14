@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials, formatTime } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { MeetingSuggestion } from "@/components/chat/meeting-suggestion";
+import { Check, CheckCheck } from "lucide-react";
 
 interface MessageListProps {
   messages: MessageWithSender[];
@@ -116,12 +117,23 @@ export function MessageList({ messages }: MessageListProps) {
                   />
                 )}
 
-                <span
-                  className="text-xs text-gray-500 dark:text-gray-400 px-2"
-                  title={new Date(message.createdAt).toLocaleString()}
-                >
-                  {formatTime(message.createdAt)}
-                </span>
+                <div className="flex items-center gap-1 px-2">
+                  <span
+                    className="text-xs text-gray-500 dark:text-gray-400"
+                    title={new Date(message.createdAt).toLocaleString()}
+                  >
+                    {formatTime(message.createdAt)}
+                  </span>
+                  {isOwnMessage && (
+                    <span className="text-gray-500 dark:text-gray-400">
+                      {message.readBy && message.readBy.length > 0 ? (
+                        <CheckCheck className="h-3 w-3 text-cyan-500" />
+                      ) : (
+                        <Check className="h-3 w-3" />
+                      )}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {isOwnMessage && (

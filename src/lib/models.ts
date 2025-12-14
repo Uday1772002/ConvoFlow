@@ -40,6 +40,7 @@ const MessageSchema = new Schema({
   content: { type: String, required: true },
   conversationId: { type: String, required: true }, // String to support various ID formats
   senderId: { type: String, required: true }, // String to support NextAuth IDs
+  readBy: [{ type: String }], // Array of user IDs who have read this message
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   deletedAt: { type: Date, default: null },

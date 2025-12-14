@@ -111,7 +111,7 @@ export function MessageInput({
 
         <Input
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={handleMessageChange}
           onKeyDown={handleKeyPress}
           placeholder="Type a message..."
           disabled={disabled}

@@ -91,6 +91,16 @@ app.prepare().then(() => {
       });
     });
 
+    // Message read event
+    socket.on("message-read", (data) => {
+      const { conversationId, messageId, userId } = data;
+      socket.to(`conversation:${conversationId}`).emit("message-read-update", {
+        messageId,
+        userId,
+      });
+      console.log(`Message ${messageId} read by user ${userId}`);
+    });
+
     // New conversation created
     socket.on("new-conversation", (data) => {
       const { conversation, participantIds } = data;

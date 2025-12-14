@@ -23,6 +23,7 @@ export interface Message {
   content: string;
   conversationId: string;
   senderId: string;
+  readBy?: string[];
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date | null;

@@ -189,6 +189,17 @@ export default function DashboardPage() {
       setOnlineUsers((prev) => prev.filter((id) => id !== userId));
     });
 
+    // Listen for message read updates
+    socket.on("message-read-update", ({ messageId, userId }) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === messageId
+            ? { ...m, readBy: [...(m.readBy || []), userId] }
+            : m
+        )
+      );
+    });
+
     return () => {
       socket.off("conversation-created");
       socket.off("message");
@@ -197,6 +208,7 @@ export default function DashboardPage() {
       socket.off("online-users");
       socket.off("user-online");
       socket.off("user-offline");
+      socket.off("message-read-update");
     };
   }, [session?.user?.id, selectedConversationId]);
 
@@ -253,6 +265,38 @@ export default function DashboardPage() {
     });
 
     fetchMessages(id);
+    
+    // Mark messages as read
+    markMessagesAsRead(id);
+  };
+
+  const markMessagesAsRead = async (conversationId: string) => {
+    if (!session?.user?.id) return;
+    
+    try {
+      const socket = getSocket();
+      const conversationMessages = messages.filter(m => m.conversationId === conversationId);
+      
+      for (const message of conversationMessages) {
+        if (message.senderId !== session.user.id && !message.readBy?.includes(session.user.id)) {
+          // Update locally
+          setMessages(prev => prev.map(m => 
+            m.id === message.id 
+              ? { ...m, readBy: [...(m.readBy || []), session.user.id] }
+              : m
+          ));
+          
+          // Emit to socket
+          socket.emit("message-read", {
+            conversationId,
+            messageId: message.id,
+            userId: session.user.id,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+    }
   };
 
   const handleTyping = () => {
