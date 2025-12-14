@@ -178,14 +178,17 @@ export default function DashboardPage() {
 
     // Listen for online status
     socket.on("online-users", (users: string[]) => {
+      console.log("📡 Received online-users:", users);
       setOnlineUsers(users);
     });
 
     socket.on("user-online", (userId: string) => {
+      console.log("✅ User came online:", userId);
       setOnlineUsers((prev) => [...new Set([...prev, userId])]);
     });
 
     socket.on("user-offline", (userId: string) => {
+      console.log("❌ User went offline:", userId);
       setOnlineUsers((prev) => prev.filter((id) => id !== userId));
     });
 
@@ -265,27 +268,34 @@ export default function DashboardPage() {
     });
 
     fetchMessages(id);
-    
+
     // Mark messages as read
     markMessagesAsRead(id);
   };
 
   const markMessagesAsRead = async (conversationId: string) => {
     if (!session?.user?.id) return;
-    
+
     try {
       const socket = getSocket();
-      const conversationMessages = messages.filter(m => m.conversationId === conversationId);
-      
+      const conversationMessages = messages.filter(
+        (m) => m.conversationId === conversationId
+      );
+
       for (const message of conversationMessages) {
-        if (message.senderId !== session.user.id && !message.readBy?.includes(session.user.id)) {
+        if (
+          message.senderId !== session.user.id &&
+          !message.readBy?.includes(session.user.id)
+        ) {
           // Update locally
-          setMessages(prev => prev.map(m => 
-            m.id === message.id 
-              ? { ...m, readBy: [...(m.readBy || []), session.user.id] }
-              : m
-          ));
-          
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === message.id
+                ? { ...m, readBy: [...(m.readBy || []), session.user.id] }
+                : m
+            )
+          );
+
           // Emit to socket
           socket.emit("message-read", {
             conversationId,
@@ -579,6 +589,11 @@ export default function DashboardPage() {
             unreadCounts={unreadCounts}
             onlineUsers={onlineUsers}
           />
+          {onlineUsers.length > 0 && (
+            <div className="hidden">
+              {console.log("👥 Online users:", onlineUsers)}
+            </div>
+          )}
         </ScrollArea>
       </div>
       {/* Main Chat Area */}
