@@ -116,8 +116,6 @@ Create a `.env.local` file in the root folder:
 ```env
 # Your MongoDB connection string
 MONGODB_URI=mongodb://localhost:27017/convoflow
-# Or if you're using MongoDB Atlas (the cloud version):
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/convoflow?retryWrites=true&w=majority
 
 # NextAuth stuff (generate the secret by running: openssl rand -base64 32)
 NEXTAUTH_SECRET=your-super-secret-key-here
