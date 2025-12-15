@@ -5,7 +5,7 @@
 
 Hey there! 👋 Welcome to ConvoFlow - a real-time chat app that I built from scratch to show what I can do with modern web technologies. It's got everything: instant messaging, AI-powered features that actually make sense, and it's deployed and ready to use. Think of it as WhatsApp meets ChatGPT, but built by one developer in a couple of weeks!
 
-![ConvoFlow](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
+![ConvoFlow](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
@@ -270,14 +270,6 @@ convoflow/
 
 ---
 
-## 🚀 Want to Deploy This?
-
-Ready to put this live? Check out [DEPLOYMENT.md](DEPLOYMENT.md) for a complete guide on deploying to Vercel. It's actually pretty quick - you can go from local to live in about 10 minutes!
-
-**Quick tip:** Socket.IO needs a server that supports WebSockets. Vercel is great for the Next.js stuff, but for Socket.IO you might want to check out Railway, Render, or DigitalOcean for the real-time features.
-
----
-
 ## 🔒 How I Keep Your Data Safe
 
 Security might sound boring, but it's super important. Here's what I built in:
@@ -300,8 +292,6 @@ Security might sound boring, but it's super important. Here's what I built in:
 - Rate limiting to prevent spam
 - End-to-end encryption for messages
 - Two-factor authentication
-
-Want all the geeky details? Check out [SECURITY.md](SECURITY.md).
 
 ---
 
