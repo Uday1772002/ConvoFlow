@@ -15,7 +15,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     await connectDB();
     const session = await auth();
-    const { conversationId: _conversationId, messageId } = await params;
+    const { messageId } = await params; // Removed _conversationId
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -98,7 +98,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     await connectDB();
     const session = await auth();
-    const { conversationId: _conversationId, messageId } = await params;
+    const { messageId } = await params; // Removed _conversationId
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

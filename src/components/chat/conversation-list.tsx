@@ -71,20 +71,6 @@ export function ConversationList({
                 onlineUsers.includes(otherParticipants[0].user.id) && (
                   <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-950"></div>
                 )}
-              {/* Debug logging */}
-              {!conversation.isGroup && otherParticipants[0] && (
-                <div className="hidden">
-                  {console.log(
-                    `🔍 Checking ${displayName}:`,
-                    "participantId:",
-                    otherParticipants[0].user.id,
-                    "isOnline:",
-                    onlineUsers.includes(otherParticipants[0].user.id),
-                    "onlineUsers:",
-                    onlineUsers
-                  )}
-                </div>
-              )}
             </div>
 
             <div className="flex-1 min-w-0 text-left">
