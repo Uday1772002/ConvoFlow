@@ -46,12 +46,23 @@ export default function DashboardPage() {
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "error" | "info" | "success";
+  } | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
     }
   }, [status, router]);
+
+  // Auto-dismiss toast after 4 seconds
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -60,7 +71,7 @@ export default function DashboardPage() {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         const searchInput = document.querySelector<HTMLInputElement>(
-          'input[placeholder="Search conversations..."]'
+          'input[placeholder="Search conversations..."]',
         );
         searchInput?.focus();
       }
@@ -82,7 +93,7 @@ export default function DashboardPage() {
 
     const query = searchQuery.toLowerCase();
     const otherParticipants = conv.participants.filter(
-      (p) => p.user.id !== session?.user?.id
+      (p) => p.user.id !== session?.user?.id,
     );
     const displayName = conv.isGroup
       ? conv.name || "Group Chat"
@@ -111,16 +122,16 @@ export default function DashboardPage() {
 
     const socket = getSocket();
 
-    // Join user's room
-    socket.emit("join", session.user.id);
-    console.log("Socket connected, user joined:", session.user.id);
+    // Join user's room — server resolves actual userId from JWT, no need to send it
+    socket.emit("join");
+    console.log("Socket connected for user:", session.user.id);
 
     // Listen for new conversations
     socket.on(
       "conversation-created",
       (conversation: ConversationWithLastMessage) => {
         setConversations((prev) => [conversation, ...prev]);
-      }
+      },
     );
 
     // Listen for new messages
@@ -137,7 +148,7 @@ export default function DashboardPage() {
       ) {
         console.log(
           "Incrementing unread for conversation:",
-          message.conversationId
+          message.conversationId,
         );
         setUnreadCounts((prev) => ({
           ...prev,
@@ -160,7 +171,7 @@ export default function DashboardPage() {
           }
           return prev;
         });
-      }
+      },
     );
 
     socket.on(
@@ -173,7 +184,7 @@ export default function DashboardPage() {
             [conversationId]: current.filter((u) => u !== userName),
           };
         });
-      }
+      },
     );
 
     // Listen for online status
@@ -287,7 +298,7 @@ export default function DashboardPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content }),
-        }
+        },
       );
 
       if (response.ok) {
@@ -344,9 +355,10 @@ export default function DashboardPage() {
     if (!selectedConversationId) return;
 
     if (messages.length === 0) {
-      alert(
-        "Please send at least one message before requesting AI suggestions. The AI needs conversation context to generate relevant replies."
-      );
+      setToast({
+        type: "info",
+        message: "Send at least one message before requesting AI suggestions.",
+      });
       return;
     }
 
@@ -377,15 +389,17 @@ export default function DashboardPage() {
       if (response.ok) {
         setAiSuggestions(data.suggestions || []);
       } else {
-        alert(
-          data.error || "Failed to generate AI suggestions. Please try again."
-        );
+        setToast({
+          type: "error",
+          message: data.error || "Failed to generate AI suggestions.",
+        });
       }
     } catch (error) {
       console.error("Error getting AI suggestions:", error);
-      alert(
-        "Failed to generate AI suggestions. Please check your connection and try again."
-      );
+      setToast({
+        type: "error",
+        message: "Failed to generate AI suggestions. Check your connection.",
+      });
     } finally {
       setIsLoadingSuggestions(false);
     }
@@ -393,7 +407,7 @@ export default function DashboardPage() {
 
   const handleSummarizeChat = async () => {
     if (!selectedConversationId || messages.length === 0) {
-      alert("No messages to summarize yet.");
+      setToast({ type: "info", message: "No messages to summarize yet." });
       return;
     }
 
@@ -420,24 +434,28 @@ export default function DashboardPage() {
         setChatSummary(data.result || "");
         setIsSummaryDialogOpen(true);
       } else {
-        alert(data.error || "Failed to generate summary. Please try again.");
+        setToast({
+          type: "error",
+          message: data.error || "Failed to generate summary.",
+        });
       }
     } catch (error) {
       console.error("Error getting chat summary:", error);
-      alert(
-        "Failed to generate summary. Please check your connection and try again."
-      );
+      setToast({
+        type: "error",
+        message: "Failed to generate summary. Check your connection.",
+      });
     } finally {
       setIsLoadingSummary(false);
     }
   };
 
   const selectedConversation = conversations.find(
-    (c) => c.id === selectedConversationId
+    (c) => c.id === selectedConversationId,
   );
 
   const otherParticipants = selectedConversation?.participants.filter(
-    (p) => p.user.id !== session?.user?.id
+    (p) => p.user.id !== session?.user?.id,
   );
 
   const displayName = selectedConversation?.isGroup
@@ -470,14 +488,14 @@ export default function DashboardPage() {
               <NotificationCenter
                 unreadCount={Object.values(unreadCounts).reduce(
                   (sum, count) => sum + count,
-                  0
+                  0,
                 )}
               />
               <Avatar className="h-8 w-8">
                 <AvatarImage src={session?.user?.image || undefined} />
                 <AvatarFallback>
                   {getInitials(
-                    session?.user?.name || session?.user?.email || "U"
+                    session?.user?.name || session?.user?.email || "U",
                   )}
                 </AvatarFallback>
               </Avatar>
@@ -679,6 +697,27 @@ export default function DashboardPage() {
           </ScrollArea>
         </DialogContent>
       </Dialog>{" "}
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed top-4 right-4 z-50 flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg text-sm font-medium max-w-sm animate-in fade-in slide-in-from-top-2 ${
+            toast.type === "error"
+              ? "bg-red-500 text-white"
+              : toast.type === "success"
+                ? "bg-green-500 text-white"
+                : "bg-cyan-600 text-white"
+          }`}
+        >
+          <span className="flex-1">{toast.message}</span>
+          <button
+            onClick={() => setToast(null)}
+            className="text-white/70 hover:text-white shrink-0 mt-0.5"
+            aria-label="Dismiss"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

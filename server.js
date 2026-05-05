@@ -7,6 +7,40 @@ const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
 
+// Parse a Cookie header string into a key-value object
+function parseCookies(cookieHeader) {
+  const cookies = {};
+  if (!cookieHeader) return cookies;
+  cookieHeader.split(";").forEach((cookie) => {
+    const [key, ...val] = cookie.trim().split("=");
+    if (key) cookies[key.trim()] = decodeURIComponent(val.join("="));
+  });
+  return cookies;
+}
+
+// Decode the NextAuth v5 JWT from the session cookie and return the user id.
+// Returns null if the token is missing, invalid, or cannot be decoded.
+async function getVerifiedUserId(cookieHeader) {
+  try {
+    const { decode } = await import("@auth/core/jwt");
+    const cookies = parseCookies(cookieHeader);
+    const isProd = process.env.NODE_ENV === "production";
+    const cookieName = isProd
+      ? "__Secure-authjs.session-token"
+      : "authjs.session-token";
+    const token = cookies[cookieName];
+    if (!token) return null;
+
+    const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "";
+    if (!secret) return null;
+
+    const decoded = await decode({ token, secret, salt: cookieName });
+    return decoded?.id || null;
+  } catch {
+    return null;
+  }
+}
+
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
@@ -35,11 +69,22 @@ app.prepare().then(() => {
   // Store connected users
   const connectedUsers = new Map();
 
+  // Reject unauthenticated socket connections
+  io.use(async (socket, next) => {
+    const userId = await getVerifiedUserId(socket.handshake.headers.cookie);
+    if (!userId) {
+      return next(new Error("Unauthorized"));
+    }
+    socket.verifiedUserId = userId;
+    next();
+  });
+
   io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
 
-    // User joins with their ID
-    socket.on("join", (userId) => {
+    // User joins — identity is taken from the verified JWT, NOT from the client
+    socket.on("join", () => {
+      const userId = socket.verifiedUserId;
       socket.userId = userId;
       connectedUsers.set(userId, socket.id);
       console.log(`User ${userId} joined with socket ${socket.id}`);
@@ -72,33 +117,33 @@ app.prepare().then(() => {
       console.log(`Message sent to conversation ${conversationId}`);
     });
 
-    // Typing events
+    // Typing events — always use the server-verified userId
     socket.on("typing", (data) => {
-      const { conversationId, userId, userName } = data;
+      const { conversationId, userName } = data;
       socket.to(`conversation:${conversationId}`).emit("user-typing", {
         conversationId,
-        userId,
+        userId: socket.verifiedUserId,
         userName,
       });
     });
 
     socket.on("stop-typing", (data) => {
-      const { conversationId, userId, userName } = data;
+      const { conversationId, userName } = data;
       socket.to(`conversation:${conversationId}`).emit("user-stopped-typing", {
         conversationId,
-        userId,
+        userId: socket.verifiedUserId,
         userName,
       });
     });
 
-    // Message read event
+    // Message read event — always use the server-verified userId
     socket.on("message-read", (data) => {
-      const { conversationId, messageId, userId } = data;
+      const { conversationId, messageId } = data;
       socket.to(`conversation:${conversationId}`).emit("message-read-update", {
         messageId,
-        userId,
+        userId: socket.verifiedUserId,
       });
-      console.log(`Message ${messageId} read by user ${userId}`);
+      console.log(`Message ${messageId} read by user ${socket.verifiedUserId}`);
     });
 
     // New conversation created

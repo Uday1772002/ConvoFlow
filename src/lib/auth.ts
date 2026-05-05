@@ -25,7 +25,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             password: string;
           };
 
-          if (!email || !password || password.length < 6) {
+          if (!email || !password || password.length < 8) {
             return null;
           }
 

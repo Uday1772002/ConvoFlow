@@ -32,13 +32,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    if (!conversation) {
-      return NextResponse.json(
-        { error: "Conversation not found" },
-        { status: 404 }
-      );
-    }
-
     // Get participants
     const participants = await User.find({
       _id: { $in: conversation.participantIds },
@@ -63,7 +56,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .lean();
 
     const senderMap = new Map(
-      senders.map((s: UserDocument) => [s._id.toString(), s])
+      senders.map((s: UserDocument) => [s._id.toString(), s]),
     );
 
     const formattedConversation = {
@@ -107,7 +100,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     console.error("Error fetching conversation:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -144,7 +137,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     console.error("Error deleting conversation:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

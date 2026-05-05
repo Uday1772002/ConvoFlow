@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { Conversation, Message, User } from "@/lib/models";
+import mongoose from "mongoose";
 import type { UserDocument, ConversationDocument } from "@/types/mongoose";
 
 // GET - Fetch all conversations for current user
@@ -46,7 +47,7 @@ export async function GET(_request: NextRequest) {
         let lastMessageFormatted = null;
         if (lastMessage) {
           const sender = participantUsers.find(
-            (p: UserDocument) => p._id.toString() === lastMessage.senderId
+            (p: UserDocument) => p._id.toString() === lastMessage.senderId,
           );
 
           if (sender) {
@@ -82,17 +83,15 @@ export async function GET(_request: NextRequest) {
           messages: lastMessageFormatted ? [lastMessageFormatted] : [],
           _count: { messages: messageCount },
         };
-      })
+      }),
     );
 
     return NextResponse.json({ conversations: conversationsWithDetails });
   } catch (error) {
     console.error("Error fetching conversations:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Internal server error", details: errorMessage },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -118,7 +117,66 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "At least one participant is required" },
-        { status: 400 }
+        { status: 400 },
+      );
+    }
+
+    const MAX_PARTICIPANTS = 50;
+    if (participantIds.length > MAX_PARTICIPANTS) {
+      return NextResponse.json(
+        {
+          error: `Group cannot have more than ${MAX_PARTICIPANTS} participants`,
+        },
+        { status: 400 },
+      );
+    }
+
+    // Validate each participantId is a valid ObjectId
+    const isValidObjectId = (id: unknown) =>
+      typeof id === "string" && mongoose.Types.ObjectId.isValid(id);
+
+    if (!participantIds.every(isValidObjectId)) {
+      return NextResponse.json(
+        { error: "Invalid participant ID format" },
+        { status: 400 },
+      );
+    }
+
+    // Prevent self-conversations
+    if (participantIds.includes(session.user.id)) {
+      return NextResponse.json(
+        { error: "Cannot start a conversation with yourself" },
+        { status: 400 },
+      );
+    }
+
+    // Validate group name if provided
+    if (isGroup && name !== undefined) {
+      if (typeof name !== "string" || name.trim().length === 0) {
+        return NextResponse.json(
+          { error: "Group name cannot be empty" },
+          { status: 400 },
+        );
+      }
+      if (name.trim().length > 100) {
+        return NextResponse.json(
+          { error: "Group name cannot exceed 100 characters" },
+          { status: 400 },
+        );
+      }
+    }
+
+    // Verify all participants exist in the database
+    const existingParticipants = await User.find({
+      _id: { $in: participantIds },
+    })
+      .select("_id")
+      .lean();
+
+    if (existingParticipants.length !== participantIds.length) {
+      return NextResponse.json(
+        { error: "One or more participants not found" },
+        { status: 400 },
       );
     }
 
@@ -197,13 +255,13 @@ export async function POST(request: NextRequest) {
           })),
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Error creating conversation:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

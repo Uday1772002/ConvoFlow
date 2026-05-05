@@ -16,7 +16,11 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get("q") || "";
+    const rawQuery = searchParams.get("q") || "";
+
+    // Cap query length and escape special regex characters to prevent ReDoS attacks
+    const query = rawQuery.slice(0, 100);
+    const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     // Convert string ID to ObjectId
     const userId = new mongoose.Types.ObjectId(session.user.id);
@@ -24,8 +28,8 @@ export async function GET(request: NextRequest) {
     const users = await User.find({
       _id: { $ne: userId },
       $or: [
-        { name: { $regex: query, $options: "i" } },
-        { email: { $regex: query, $options: "i" } },
+        { name: { $regex: safeQuery, $options: "i" } },
+        { email: { $regex: safeQuery, $options: "i" } },
       ],
     })
       .select("name email image")
@@ -44,7 +48,7 @@ export async function GET(request: NextRequest) {
     console.error("Error searching users:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
