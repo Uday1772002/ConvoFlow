@@ -13,7 +13,7 @@ Hey there! 👋 Welcome to ConvoFlow - a real-time chat app that I built from sc
 
 ---
 
-## ✨ What Makes This Cool and new
+## ✨ What Makes This Cool
 
 ### The Basics (But Done Really Well)
 
